@@ -1,0 +1,91 @@
+import torch
+from torch.utils.data import Dataset
+from transformers import AutoProcessor
+from PIL import Image
+import os
+import json
+
+class Qwen2VLDataset(Dataset):
+    def __init__(self, data_file, processor, image_size=(360, 420)):
+        """
+        Initialize the dataset.
+        Args:
+        - data_file (str): Path to the JSON file with your dataset
+        - processor (AutoProcessor): HuggingFace processor for tokenizing
+        - image_size (tuple): Resize images to this size (default is (360, 420))
+        """
+        with open(data_file, 'r') as f:
+            self.data = json.load(f)  # Load dataset from JSON file
+
+        self.processor = processor
+        self.image_size = image_size  # Resize image to fit within limits
+
+    def __len__(self):
+        """Returns the total number of samples in the dataset."""
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        """
+        Args:
+            idx (int): Index for the dataset.
+        
+        Returns:
+            dict: Tokenized input and labels
+        """
+        item = self.data[idx]
+        messages = item['messages']
+        
+        # Extract user input (image/video + prompt)
+        user_message = messages[0]
+        content = user_message['content']
+        image_or_video = content[0]  # Image or video input
+        text_prompt = content[1]['text']  # The text prompt (question to describe the media)
+
+        # Process image/video input
+        if image_or_video['type'] == 'image':
+            image_path = image_or_video['image']
+            image = Image.open(image_path).convert("RGB")
+            image = image.resize(self.image_size)  # Resize to match model limits
+            image_input = self.processor(images=image, return_tensors="pt").pixel_values
+        elif image_or_video['type'] == 'video':
+            video_path = image_or_video['image']
+            # Handle video processing logic (optional)
+            # For simplicity, assume we're using one frame from the video or use a special processor
+            video_input = self.processor(video=video_path, return_tensors="pt").pixel_values
+            image_input = video_input  # You can decide how to use the video frames
+            
+        # Prepare the text (description from assistant)
+        assistant_message = messages[1]
+        assistant_content = assistant_message['content']
+        text_description = assistant_content  # Target text
+
+        # Tokenize the inputs (text + image/video)
+        inputs = self.processor(
+            text=[text_prompt], 
+            images=image_input, 
+            padding=True, 
+            return_tensors="pt"
+        )
+
+        # Labels (text output)
+        labels = self.processor.batch_encode_plus(
+            [text_description], 
+            return_tensors="pt", 
+            padding=True
+        ).input_ids
+
+        # Move tensors to device (use GPU if available)
+        inputs = {key: value.squeeze().to("cuda") for key, value in inputs.items()}
+        labels = labels.squeeze().to("cuda")
+
+        return {'input_ids': inputs['input_ids'], 'attention_mask': inputs['attention_mask'], 'labels': labels}
+
+# Example Usage:
+# Initialize the processor and dataset
+model_name = "Qwen/Qwen2-VL-2B-Instruct"
+processor = AutoProcessor.from_pretrained(model_name)
+train_dataset = Qwen2VLDataset(data_file="qwen2_dataset.json", processor=processor)
+
+# Check the first sample in the dataset
+sample = train_dataset[0]
+print(sample)
