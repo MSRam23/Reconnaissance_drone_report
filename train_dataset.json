@@ -1,0 +1,17 @@
+{
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          { "type": "image", "image": "./Data/Images/earthquake/download (1).jpg" },
+          { "type": "text", "text": "What is happening in this image?" }
+        ]
+      },
+      {
+        "role": "assistant",
+        "content": "A detailed explanation of the image or video goes here."
+      }
+    ]
+  }
+
+  
