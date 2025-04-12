@@ -1,28 +1,28 @@
 [
   {
-    "image": "earthquake/download.jpg",
+    "image": "C:/AI/Github/Reconnaissance_drone_report/Data/Images/earthquake/download.jpg",
     "query": "Describe the damage caused by this earthquake.",
     "description": "This image shows severe damage to buildings and infrastructure caused by the earthquake, including collapsed structures and debris-filled streets."
   },
+  
   {
-    "image": "forest fire/images.jpg",
+    "image": "C:/AI/Github/Reconnaissance_drone_report/Data/Images/forest_fire/images.jpg",
     "query": "What can be inferred from this image?",
     "description": "The forest fire appears to be large-scale with significant intensity, indicated by the thick smoke plumes and widespread burning of vegetation."
   },
   {
-    "image": "earthquake/images.jpg",
+    "image": "C:/AI/Github/Reconnaissance_drone_report/Data/Images/earthquake/images.jpg",
     "query": "What can be inferred from this image?",
     "description": "The low-lying coastal areas and regions near rivers are at high risk of flooding due to the storm surge and heavy rainfall associated with the hurricane."
   },
   {
-    "image": "landslide/images.jpg",
+    "image": "C:/AI/Github/Reconnaissance_drone_report/Data/Images/landslide/images.jpg",
     "query": "What can be inferred from this image?",
     "description": "The slope appears unstable due to the visible signs of soil erosion and the lack of vegetation, increasing the likelihood of further landslides."
   },
   {
-    "image": "war/image.jpg",
+    "image": "C:/AI/Github/Reconnaissance_drone_report/Data/Images/war/image.jpg",
     "query": "What can be inferred from this image?",
     "description": "The level of destruction is high, with damaged buildings and displaced civilians, indicating a significant human impact from the war."
   }
-  
 ]
